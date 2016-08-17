@@ -1,0 +1,61 @@
+<h1>Eat-Da-Burger</h1>
+
+<img src="/assets/img/burger.png">
+
+<div class="adda">
+  <h2>Add a Burger:</h2>
+  <form class="create-update-form" action="burgers/create" method="POST">
+
+    <div class="form-group">
+      <label for="burg">Burger Name:</label>
+      <input type="text" id="burg" name="burger_name">
+    </div>
+
+    <div class="form-group">
+      <label for="devoured">Burger Devour Status:?</label><br>
+      <input type="radio" name="devoured" value="1" checked> Devoured!<br>
+      <input type="radio" name="devoured" value="0"> Not Devoured!
+    </div>
+
+    <button type="submit">Add Burger</button>
+  </form>
+</div>
+
+<div class="avail">
+  <h2>Burgers available to devour:</h2>
+
+  <ul>
+    {{#each burgers}}
+      {{#unless devoured}}
+        <li>
+          {{burger_name}}
+
+          <form action="burgers/update/{{this.id}}?_method=PUT" method="POST">
+            <input type="hidden" name="devoured" value="true">
+            <button type="submit">Devour!</button>
+          </form>
+          {{> burgers/delete-burgers}}
+        </li>
+      {{/unless}}
+    {{/each}}
+  </ul>
+</div>
+
+<div class="unavail">
+<h2>Burgers devoured:</h2>
+
+<ul>
+  {{#each burgers}}
+    {{#if devoured}}
+      <li>
+        {{burger_name}}
+
+        <form action="burgers/update/{{this.id}}?_method=PUT" method="POST">
+          <input type="hidden" name="devoured" value="false">
+          <button type="submit">Throw it up!</button>
+        </form>
+      </li>
+    {{/if}}
+  {{/each}}
+</ul>
+</div>

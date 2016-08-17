@@ -1,0 +1,31 @@
+li {
+  background: #F9F99F ;
+  margin: 5px;
+  padding: 5px;
+}
+
+ul{
+	list-style-type: none;
+	padding-left: 0;
+	padding-right: 70%;
+}
+
+img{
+	height: 200px;
+	width: 300px;
+}
+
+.label {
+  font-weight: bold;
+}
+
+.create-update-form {
+  background: #F9F99F ;
+  margin: 5px;
+  padding: 5px;
+  margin-right: 70%;
+}
+
+.form-group {
+  margin-bottom: 5px;
+}
