@@ -1,0 +1,69 @@
+<h1>Eat-Da-Burger!</h1>
+
+{{#if username}}
+  Welcome {{username}}! Make a burger.
+{{/if}}
+
+{{#unless logged_in}}
+  <p> Sign up to add a burger!! </p>
+{{/unless}}
+
+{{#if logged_in}}
+  <h2>Add a Burger</h2>
+
+  <form class="create-update-form" action="burgers/create" method="POST">
+
+    <div class="form-group">
+      <label for="burger_name">Burger Name:</label>
+      <input type="text" id="burger_name" name="burger_name">
+    </div>
+
+    <div class="form-group">
+      <label for="dev">Devoured?</label><br>
+      <input type="radio" name="dev" value="1" checked> Devoured<br>
+      <input type="radio" name="dev" value="0"> Not Devoured
+    </div>
+
+    <button type="submit">Add Burger</button>
+  </form>
+{{/if}}
+
+
+
+<h2>Burgers that are not devoured!</h2>
+
+<ul>
+  {{#each burgers}}
+    {{#unless this.devoured}}
+      <li>
+        {{this.burger_name}} - owned by {{this.User.email}}
+
+        <form action="burgers/update/{{this.id}}?_method=PUT" method="POST">
+          <input type="hidden" name="devoured" value="true">
+          <button type="submit">Devour!</button>
+        </form>
+
+        {{> burgers/delete-burger}}
+      </li>
+    {{/unless}}
+  {{/each}}
+</ul>
+
+<h2>Burgers yet to be devoured!</h2>
+
+<ul>
+  {{#each burgers}}
+    {{#if this.devoured}}
+      <li>
+        {{this.burger_name}} - owned by {{this.User.email}}
+
+        <form action="burgers/update/{{this.id}}?_method=PUT" method="POST">
+          <input type="hidden" name="devoured" value="false">
+          <button type="submit">Throw Up!</button>
+        </form>
+
+        {{> burgers/delete-burger}}
+      </li>
+    {{/if}}
+  {{/each}}
+</ul>

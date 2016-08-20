@@ -1,44 +1,86 @@
+var models  = require('../models');
 var express = require('express');
-var bodyParser = require('body-parser');
-var methodOverride = require('method-override');
-var burger = require('../models/burger.js');
+var router  = express.Router();
 
-var router = express.Router();
 
-router.get('/', function(req, res){
-	res.redirect('/burgers');
+router.get('/', function(req, res) {
+
+  // SOLUTION:
+  // =========
+  // use the Cat model to find all cats,
+  // and use the include option to grab info from the User model.
+  // This will let us show the cat and it's owner.
+  models.Burger.findAll({
+    include: [ models.User ]
+  })
+  // connect the findAll to this .then
+  .then(function(burgers) {
+    // grab the user info from our req.
+    // How is it in our req?
+    // This info gets saved to req via the users_controller.js file.
+    res.render('burgers/index', {
+      user_id: req.session.user_id,
+      email: req.session.user_email,
+      logged_in: req.session.logged_in,
+      burgers: burgers
+    });
+  });
 });
 
-router.get('/burgers', function (req, res) {
-	burger.all(function (data) {
-		var hbsobject = { burgers: data };
-		console.log(hbsobject);
-		res.render('index', hbsobject);
-	});
+router.post('/create', function (req, res) {
+  // SOLUTION:
+  // =========
+  // use the Cat model to create a cat based on what's
+  // passed in req.body (name, sleepy, user_id)
+  models.Burger.create({
+    burger_name: req.body.burger_name,
+    devoured: req.body.devoured,
+    user_id: req.session.user_id
+  })
+  // connect the .create to this .then
+  .then(function() {
+    res.redirect('/');
+  });
 });
 
-router.post('/burgers/create', function (req, res) {
-	burger.create(['burger_name', 'devoured'], [req.body.burger_name, req.body.devoured], function () {
-		res.redirect('/burgers');
-	});
+router.put('/update/:id', function(req,res) {
+  // SOLUTION:
+  // =========
+  // use the Cat model to update a cat's sleepy status
+  // based on the boolean passed in req.body sleepy
+  // and the id of the cat (as passed in the url)
+  models.Burger.update(
+  {
+    devoured: req.body.devoured
+  },
+  {
+    where: { id : req.params.id }
+  })
+  // connect it to this .then.
+  .then(function (result) {
+    res.redirect('/');
+  }, function(rejectedPromiseError){
+
+  });
 });
 
-router.put('/burgers/update/:id', function (req, res) {
-	var condition = 'id = ' + req.params.id;
 
-	console.log('condition: ', condition);
+router.delete('/delete/:id', function(req,res) {
+  // SOLUTION:
+  // =========
+  // use the Cat model to delete a cat
+  // based on the id passed in the url
+  models.Burger.destroy({
+    where: {
+      id: req.params.id
+    }
+  })
+  // connect it to this .then.
+  .then(function() {
+    res.redirect('/');
+  });
 
-	burger.update({ devoured: req.body.devoured }, condition, function () {
-		res.redirect('/burgers');
-	});
 });
 
-router.delete('/burgers/delete/:id', function (req, res) {
-	var condition = 'id = ' + req.params.id;
-
-	burgers.delete(condition, function () {
-		res.redirect('/burgers');
-	});
-});
 
 module.exports = router;

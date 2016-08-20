@@ -1,61 +1,49 @@
-<h1>Eat-Da-Burger</h1>
+<h1>Project Management Tool</h1>
 
-<img src="/assets/img/burger.png">
+<h2>Create a new person</h2>
 
-<div class="adda">
-  <h2>Add a Burger:</h2>
-  <form class="create-update-form" action="burgers/create" method="POST">
+{{#if logged_in}}
+  <form action="/people/create" method="POST">
+    <input type="text" name="name">
 
-    <div class="form-group">
-      <label for="burg">Burger Name:</label>
-      <input type="text" id="burg" name="burger_name">
-    </div>
-
-    <div class="form-group">
-      <label for="devoured">Burger Devour Status:?</label><br>
-      <input type="radio" name="devoured" value="1" checked> Devoured!<br>
-      <input type="radio" name="devoured" value="0"> Not Devoured!
-    </div>
-
-    <button type="submit">Add Burger</button>
+    <input type="submit">
   </form>
-</div>
+{{/if}}
 
-<div class="avail">
-  <h2>Burgers available to devour:</h2>
+{{#unless logged_in}}
+  <p>
+    You must login to add a person.
+  </p>
+{{/unless}}
 
-  <ul>
-    {{#each burgers}}
-      {{#unless devoured}}
-        <li>
-          {{burger_name}}
-
-          <form action="burgers/update/{{this.id}}?_method=PUT" method="POST">
-            <input type="hidden" name="devoured" value="true">
-            <button type="submit">Devour!</button>
-          </form>
-          {{> burgers/delete-burgers}}
-        </li>
-      {{/unless}}
-    {{/each}}
-  </ul>
-</div>
-
-<div class="unavail">
-<h2>Burgers devoured:</h2>
+<h2>People</h2>
 
 <ul>
-  {{#each burgers}}
-    {{#if devoured}}
-      <li>
-        {{burger_name}}
+  {{#each people}}
+    <li>
+      {{this.name}}
+      {{#if ../logged_in}}
+        <a href="/people/{{this.id}}/destroy"> destroy</a>
+      {{/if}}
+      <ul>
+        {{#if ../logged_in}}
+          <li>
+            <form action="/people/{{this.id}}/tasks/create" method="POST" style="display: inline">
+              <input type="text" name="task" placeholder="add task here">
+              <input type="submit" value"assign task">
+            </form>
+          </li>
+        {{/if}}
 
-        <form action="burgers/update/{{this.id}}?_method=PUT" method="POST">
-          <input type="hidden" name="devoured" value="false">
-          <button type="submit">Throw it up!</button>
-        </form>
-      </li>
-    {{/if}}
+        {{#each this.Tasks }}
+          <li>
+            {{this.task}}
+            {{#if ../../logged_in}}
+              <a href="/people/{{this.person_id}}/tasks/{{this.id}}/destroy">destroy</a>
+            {{/if}}
+          </li>
+        {{/each}}
+      </ul>
+    </li>
   {{/each}}
 </ul>
-</div>
